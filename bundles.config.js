@@ -375,6 +375,7 @@ exports.extensionBundles = [
     type: TYPES.MISC,
   },
   {name: 'amp-timeago', version: '0.1', type: TYPES.MISC},
+  {name: 'amp-twitch-player', version: '0.1', type: TYPES.MISC},
   {
     name: 'amp-twitter',
     version: '0.1',
