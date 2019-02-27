@@ -15,6 +15,8 @@
  */
 
 import {Layout} from '../../../src/layout';
+import {isLayoutSizeDefined} from '../../../src/layout';
+import {userAssert} from '../../../src/log';
 
 export class AmpTwitchPlayer extends AMP.BaseElement {
 
@@ -22,24 +24,58 @@ export class AmpTwitchPlayer extends AMP.BaseElement {
   constructor(element) {
     super(element);
 
-    /** @private {string} */
-    this.myText_ = 'hello world';
-
     /** @private {?Element} */
-    this.container_ = null;
+    this.videoId_ = null;
+
+    /** @private {string} */
+    this.frameborder_ = '';
+
+    /** @private {string} */
+    this.width_ = '300';
+
+    /** @private {string} */
+    this.height_ = '250';
+
+    /** @private {string} */
+    this.allowFullScreen_ = '';
   }
 
   /** @override */
-  buildCallback() {
-    this.container_ = this.element.ownerDocument.createElement('div');
-    this.container_.textContent = this.myText_;
-    this.element.appendChild(this.container_);
-    this.applyFillContent(this.container_, /* replacedContent */ true);
+  createPlaceholderCallback() {
+    const placeholder = this.win.document.createElement('iframe');
+    this.height_ = userAssert(
+        this.element.getAttribute('height'),
+        'The height attribute is required'
+    );
+    this.width_ = userAssert(
+        this.element.getAttribute('width'),
+        'The width attribute is required'
+    );
+    this.videoId_ = userAssert(
+        this.element.getAttribute('videoId'),
+        'The videoId attribute is required'
+    );
+    this.frameborder_ = userAssert(
+        this.element.getAttribute('frameborder'),
+        'The frameborder attribute is required'
+    );
+    this.allowFullScreen_ = userAssert(
+        this.element.getAttribute('allowFullScreen'),
+        'The allowFullScreen attribute is required'
+    );
+    // placeholder.setAttribute('layout', 'responsive');
+    placeholder.setAttribute('frameborder', this.frameborder_);
+    placeholder.setAttribute('layout', 'responsive');
+    placeholder.setAttribute('allowFullScreen', this.allowFullScreen_);
+    placeholder.setAttribute('height', this.height_);
+    placeholder.setAttribute('width', this.width_);
+    placeholder.setAttribute('src', `https://player.twitch.tv/?video=v${this.videoId_}&autoplay=true`);
+    return placeholder;
   }
 
   /** @override */
   isLayoutSupported(layout) {
-    return layout == Layout.RESPONSIVE;
+    return isLayoutSizeDefined(layout);
   }
 }
 
